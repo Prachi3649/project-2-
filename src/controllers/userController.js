@@ -99,22 +99,30 @@ const loginUser = async function (req, res) {
       let body = req.body;
   
       if (Object.keys(body).lenght != 0) {
-        let userName = req.body.email;
+        let emailId = req.body.email;
         let passwords = req.body.password;
-        if (!(userName || passwords)) {
+        if (!(emailId || passwords)) {
           return res.status(400).send({ status: false, message: "user does not exit" })
         }
+
+        
+        if (!isValid(emailId)) {
+          return res.status(400).send({ status: false, message: ' Please provied Email Id' })}
   
-        if (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(userName))) { return res.status(400).send({ status: false, message: "Please provide a valid email" }) }
+        if (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(emailId))) { return res.status(400).send({ status: false, message: "Please provide a valid email" }) }
+
+        if (!isValid(passwords)) {
+          return res.status(400).send({ status: false, message: 'Please provied Password ' })}
   
         if (!(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{8,15}$/.test(passwords))) {
   
           return res.status(400).send({ status: false, message: 'Please provide a valid password' })
-  
         }
+
+      
   
   
-        let user = await userModel.findOne({ email: userName, password: passwords });
+        let user = await userModel.findOne({ email: emailId, password: passwords });
   
         if (!user) {
   
@@ -128,7 +136,7 @@ const loginUser = async function (req, res) {
           {
             userId: user._id,
             iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 60 * 60
+            exp: Math.floor(Date.now() / 1000) + 20 * 60 * 60
   
           }, "TmySecretK#key...$$@@"
   
