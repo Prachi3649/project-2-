@@ -17,6 +17,8 @@ const bookSchema = new mongoose.Schema({
     subcategory: {type:String, required:true},
 
     reviews: {type:Number, default: 0, comment:{type:Number} },
+
+    url : {type: Object, required: true , ref :"https://classroom-training-bucket.s3.ap-south-1.amazonaws.com/radhika/book%20cover.jpg" },
     
     deletedAt: {type:Date}, 
 

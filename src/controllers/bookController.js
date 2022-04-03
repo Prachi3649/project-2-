@@ -3,6 +3,9 @@ const userModel = require('../models/userModel');
 const reviewModel = require('../models/reviewModel');
 const mongoose = require("mongoose")
 
+
+
+
 const isValid = function (value) {
   if (typeof value == undefined || value == null || value.length == 0) return false
   if (typeof value === 'string' && value.trim().length === 0) return false
@@ -22,6 +25,9 @@ const isValidObjectId = function (ObjectId) {
 const createBook = async function (req, res) {
   try {
       const bookBody = req.body
+      
+      const url = req.body
+      
       if(!isValidRequestBody(bookBody)) {
           return res.status(400).send({status: false, message: 'Please provide book details'})
       }
@@ -49,6 +55,10 @@ const createBook = async function (req, res) {
       if(!isValid(ISBN)) {
           return res.status(400).send({status: false, message: 'ISBN is required'})
       }
+
+      if(!isValid(url)) {
+        return res.status(400).send({status: false, message: 'url is required'})
+    }
 
       const duplicateISBN = await booksModel.findOne({ISBN: ISBN})
 
@@ -79,7 +89,7 @@ const createBook = async function (req, res) {
           return res.status(400).send({status: false, message: `userId ${userId} is not present`})
       }
 
-      const reqData = { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt }
+      const reqData = { title, excerpt, userId, ISBN, category, subcategory, reviews, releasedAt, url}
 
       const bookCreated = await booksModel.create(reqData)
       return res.status(201).send({status: true, message: 'Book Successfully Created', data: bookCreated})
@@ -96,6 +106,7 @@ const createBook = async function (req, res) {
 const getbook = async function (req, res) {
   try {
    let filter = {isDeleted: false}
+
    if(req.query.userId) {
      if  (!(isValid(req.query.userId) && isValidObjectId(req.query.userId))){
        return res.status(400).send ({ status:  false, msg: "User Id is not valid"})
@@ -124,7 +135,7 @@ const getbook = async function (req, res) {
   }
     const Books = await booksModel.find(filter).select({
       title: 1, excerpt: 1, userId: 1, category: 1, 
-      releasedAt: 1, reviews: 1
+      releasedAt: 1, reviews: 1, 
     }).sort({ title: 1 })
 
     if (Books.length === 0) {

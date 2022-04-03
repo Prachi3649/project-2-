@@ -3,6 +3,7 @@ const router = express.Router();
 const UserController = require("../controllers/userController")
 const BookController = require("../controllers/bookController")
 const ReviewController = require("../controllers/reviewcontroller")
+const AWSController =require ("../controllers/awsController")
 const { authentication, authorisation,createAuthorisation } = require('../middleware/auth');
 
 
@@ -25,5 +26,6 @@ router.post('/books/:bookId/review', ReviewController.creatReview);
 router.put('/books/:bookId/review/:reviewId', ReviewController.updatebyReviewId);
 router.delete('/books/:bookId/review/:reviewId', ReviewController.deleteByReviewId);
 
-
+//multer
+router.post("/write-file-aws",AWSController.writeToAWS)
 module.exports = router;
